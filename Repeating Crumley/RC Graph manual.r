@@ -5,6 +5,7 @@
 # to get the https:// URL from Google that you pass to this
 # The following is based on instructions at: http://blog.revolutionanalytics.com/2009/09/how-to-use-a-google-spreadsheet-as-data-in-r.html#
 require(RCurl)
+require(binom)
 
 myCsv <- getURL("https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AhLNnjMk2r_qdFJRNGNaN0RNM0RucHE5dUY4Q3BNTFE&single=true&gid=0&range=A1%3AAC12&output=csv", ssl.verifypeer=FALSE)  #ssl.verifypeer=FALSE gets around certificate issues I don't understand.
 
