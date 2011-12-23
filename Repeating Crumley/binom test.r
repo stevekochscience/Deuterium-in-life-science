@@ -25,7 +25,7 @@ bayesDI <- binom.bayes(DIData$NumberGerminated, DIData$NumberSeeds, conf.level =
 bayesDDW <- binom.bayes(DDWData$NumberGerminated, DDWData$NumberSeeds, conf.level = conflev)
 
 #I use following line and dev.off() at bottom to save the graph
-png (paste("RC Bayes Conf", conflev))
+png (paste("RC Bayes Conf ", conflev, ".png", sep = "" ))
 
 #at this point, the following code will plot the mean and confidence range from the bayes binomial method.  i don't know how
 #to rescale the axes, though, so the scale is set by the first plot() call.  should be easy, I just don't know how
