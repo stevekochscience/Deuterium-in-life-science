@@ -66,12 +66,23 @@ lines(subdata$wave., (diffDiDdw), type="l", lty=1, col="black")
 lines(subdata$wave., (diffDiD2o), type="l", lty=1, col="red")
 legend("topright", c("DI water - DDW", "DI water - D2O"), col=c("black", "red"), lty=1, inset=.1)
 
+#Plot DI water compared to Seigelstein 1981
 windows()
-plot(subdata$wavelength/1000, -log(subdata$di/100), type="n", log="xy", main="FTIR DI Water", 
+plot(subdata$wavelength/1000, -log(subdata$di/100), type="n", log="xy", main="Water IR absorption compared with Seigelstein", 
      xlab="wavelength (micron)", ylab="absorption (1/cm ?)", ylim=c(0.1,100))
 lines(subdata$wavelength/1000, -log(subdata$di/100), type="l", lty=1, col="black")
 lines(subref$wavelength/1000, subref$abs, type="l", lty=1, col="red")
-legend("bottomright", c("Alex, Ant DI Water", "Seigelstein 1981"), col=c("black", "red"), lty=1, inset=.1)
+legend("bottomright", c("Alex, Anthony DI Water", "Seigelstein 1981"), col=c("black", "red"), lty=1, inset=.1)
+
+#Plot DDW water compared to Seigelstein 1981
+windows()
+plot(subdata$wavelength/1000, -log(subdata$ddw/100), type="n", log="xy", main="DDW, DI, D2O IR absorption compared with Seigelstein", 
+     xlab="wavelength (micron)", ylab="absorption (1/cm ?)", ylim=c(0.1,100))
+lines(subdata$wavelength/1000, -log(subdata$ddw/100), type="l", lty=1, col="black")
+lines(subdata$wavelength/1000, -log(subdata$di/100), type="l", lty=1, col="magenta")
+lines(subdata$wavelength/1000, -log(subdata$d2o/100), type="l", lty=1, col="orange")
+lines(subref$wavelength/1000, subref$abs, type="l", lty=1, col="green")
+legend("bottomright", c("Alex, Anthony DDW Water", "Alex, Anthony DI Water", "Alex, Anthony D2O Water", "Seigelstein 1981"), col=c("black", "magenta", "orange", "green"), lty=1, inset=.1)
                                                               
 # this next command is necessary to make the graph save, I don't know why.  It makes the graph disappear from the screen though
 # I also have trouble viewing the file with external editor unless I close out of R.  Obviously doing something wrong.
