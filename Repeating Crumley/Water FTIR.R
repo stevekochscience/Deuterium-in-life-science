@@ -25,6 +25,8 @@ require(binom)
 # Two solutions for the commas were suggested on stackoverflow http://stackoverflow.com/questions/8651062/google-docs-exports-spreadsheet-values-with-commas-read-csv-in-r-treats-these
 
 myCsv <- getURL("https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0Agbdciapt4QZdE95UDFoNHlyNnl6aGlqbGF0cDIzTlE&single=true&gid=0&range=A1%3AG4928&output=csv", ssl.verifypeer=FALSE)  #ssl.verifypeer=FALSE gets around certificate issues I don't understand.
+# The spreadsheet can be viewed at https://docs.google.com/spreadsheet/ccc?key=0Agbdciapt4QZdE95UDFoNHlyNnl6aGlqbGF0cDIzTlE&hl=en_US#gid=0
+# The first column is wave# (units?) second column is wavelength, third D2O, fourth DI, fifth DDW, 6th DDW OLD, 7th D2O/DDW mix
 
 
 fullmatrix <- read.csv(textConnection(myCsv), stringsAsFactors = FALSE)
@@ -33,14 +35,19 @@ fullmatrix$wavelength <- as.numeric(gsub(",", "", fullmatrix$wavelength))
 
 # --- For method 2 of dealing with commas. i am using the simpler, less cool method #1
 #fullmatrix <- read.csv(textConnection(myCsv), colClasses = c(rep("num.with.commas", 2), rep("numeric",5) ))
-                                   
+
+# convert transmission data to absorption coefficient. guessing data = t/t0 * 100 and pathlength of 1 cm
+fullmatrix$d2o.abs <- -log(fullmatrix$d2o/100)
+fullmatrix$di.abs <- -log(fullmatrix$di/100)
+fullmatrix$ddw.abs <- -log(fullmatrix$ddw/100)
+fullmatrix$ddw.old.abs <- -log(fullmatrix$ddw.old/100)
+fullmatrix$d2o.ddw.mix.abs <- -log(fullmatrix$d2o.ddw.mix/100)
+   
+#truncate data to wavelength <4000 nm                                   
 subdata <- fullmatrix[ which(fullmatrix$wavelength < 4000),]
 diffDiDdw <- (subdata$di - subdata$ddw)
 diffDdwoldDdw <- (subdata$ddw.old - subdata$ddw)
 diffDiD2o <- (subdata$di - subdata$d2o)
-
-# The spreadsheet can be viewed at https://docs.google.com/spreadsheet/ccc?key=0Agbdciapt4QZdE95UDFoNHlyNnl6aGlqbGF0cDIzTlE&hl=en_US#gid=0
-# The first column is wave# (units?) second column is wavelength, third D2O, fourth DI, fifth DDW, 6th DDW OLD, 7th D2O/DDW mix
 
 # read in the water absorption spectrum (Segelstein 1981) downloaded from http://omlc.ogi.edu/spectra/water/data/segelstein81.dat
 # first coloumn is wavelength (nm), second column is absorption (1/cm)
@@ -76,13 +83,17 @@ legend("bottomright", c("Alex, Anthony DI Water", "Seigelstein 1981"), col=c("bl
 
 #Plot DDW water compared to Seigelstein 1981
 windows()
-plot(subdata$wavelength/1000, -log(subdata$ddw/100), type="n", log="xy", main="DDW, DI, D2O IR absorption compared with Seigelstein", 
+plot(subdata$wavelength/1000, subdata$ddw.abs, type="n", log="xy", main="DDW, DI, D2O IR absorption compared with Seigelstein", 
      xlab="wavelength (micron)", ylab="absorption (1/cm ?)", ylim=c(0.1,100))
-lines(subdata$wavelength/1000, -log(subdata$ddw/100), type="l", lty=1, col="black")
-lines(subdata$wavelength/1000, -log(subdata$di/100), type="l", lty=1, col="magenta")
-lines(subdata$wavelength/1000, -log(subdata$d2o/100), type="l", lty=1, col="orange")
+lines(subdata$wavelength/1000, subdata$ddw.abs, type="l", lty=1, col="black")
+lines(subdata$wavelength/1000, subdata$di.abs, type="l", lty=1, col="magenta")
+lines(subdata$wavelength/1000, subdata$d2o.abs, type="l", lty=1, col="orange")
+lines(subdata$wavelength/1000, subdata$ddw.old.abs, type="l", lty=1, col="cyan")
+lines(subdata$wavelength/1000, subdata$d2o.ddw.mix.abs, type="l", lty=1, col="yellow")
 lines(subref$wavelength/1000, subref$abs, type="l", lty=1, col="green")
-legend("bottomright", c("Alex, Anthony DDW Water", "Alex, Anthony DI Water", "Alex, Anthony D2O Water", "Seigelstein 1981"), col=c("black", "magenta", "orange", "green"), lty=1, inset=.1)
+legend("bottomright", c("Alex, Anthony DDW Water", "Alex, Anthony DI Water", "Alex, Anthony D2O Water", 
+       "Alex, Anthony DDW Old", "Alex, Anthony D2O/DDW mix", "Seigelstein 1981"), 
+       col=c("black", "magenta", "orange", "cyan", "yellow", "green"), lty=1, inset=.1)
                                                               
 # this next command is necessary to make the graph save, I don't know why.  It makes the graph disappear from the screen though
 # I also have trouble viewing the file with external editor unless I close out of R.  Obviously doing something wrong.
