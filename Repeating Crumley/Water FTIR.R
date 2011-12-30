@@ -94,6 +94,7 @@ lines(subref$wavelength/1000, subref$abs, type="l", lty=1, col="green")
 legend("bottomright", c("Alex, Anthony DDW Water", "Alex, Anthony DI Water", "Alex, Anthony D2O Water", 
        "Alex, Anthony DDW Old", "Alex, Anthony D2O/DDW mix", "Seigelstein 1981"), 
        col=c("black", "magenta", "orange", "cyan", "yellow", "green"), lty=1, inset=.1)
+  
                                                               
 # this next command is necessary to make the graph save, I don't know why.  It makes the graph disappear from the screen though
 # I also have trouble viewing the file with external editor unless I close out of R.  Obviously doing something wrong.
